@@ -11,6 +11,7 @@
 std::string prepare(const std::string& str) {
 	std::string result = str;
 	std::transform(str.begin(), str.end(), result.begin(), ::tolower);
+	// str[std.size() - 1] можно написать короче str.back() 
 	if (!isalpha(str[str.size() - 1]))
 		result.pop_back();
 	return result;
@@ -20,12 +21,15 @@ struct Statistics
 {
 	int cout;
 	std::string word;
-
 };
 
+/*
+обычно аргументы в компараторах и бинарных операторах называют lhs, rhs ...
+left-hand side, right-hand side
+*/
 bool compare(const Statistics& a, const Statistics& b)
 {
-	return (a.cout > b.cout);
+	return a.cout > b.cout;
 }
 int main() 
 {
@@ -43,6 +47,7 @@ int main()
 			map[word] ++;
 		}
 		std::vector<Statistics> array;
+		// auto всё-таки лаконичнее и не менее понятно
 		for (std::map<std::string, int>::iterator it = map.begin(); it != map.end(); it++)
 		{
 			Statistics element;
@@ -53,6 +58,7 @@ int main()
 		}
 		std::sort(array.begin(), array.end(), compare);
 		std::cout << "The final result\n";
+		// можно было объявить i и N типа size_t или unsigned int просто
 		for (int i = 0; ((unsigned int)i < array.size() && (i < N)); i++) {
 			std::cout << array[i].word << "-" << array[i].cout << "\n";
 		}
