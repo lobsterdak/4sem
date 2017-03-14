@@ -10,6 +10,7 @@ struct Bullet
     sf::Sprite hero;
     void update(float dt)
     {
+        // размерность не сходится. не очень
         pos += v * (dt * bullet_speed) ;
     }
 };
@@ -42,6 +43,10 @@ int main()
     bool FLAG_FOR_MOUSE;
     const int Widht = 800;
     const int Height = 600;
+    
+    /*
+    Помесь разных стилей: пишите либо MaxSpeed, либо max_speed, либо maxSpeed
+    */
     float Max_speed = 400;
     float dt;
     float Prev_time = 0;
@@ -69,8 +74,12 @@ int main()
         sf::Time time = clock.getElapsedTime();
         window.clear(sf::Color::Yellow);
         dt = time.asSeconds() - Prev_time;
+        
+        // можно было бы не вводить синонимы: 'l' <=> sf::Keyboard::Left 
+        // передали бы сразу в checkPosition переменную типа sf::Keyboard::Key
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && checkPosition(circle, Widht, Height, 'l'))
         {
+            // тогда бы заодно завели float step = maxSpeed * dt;
             circle.move((-dt) * Max_speed, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && checkPosition(circle, Widht, Height, 'r'))
@@ -87,6 +96,7 @@ int main()
         }
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
+            // в с++ можно писать = true
             FLAG_FOR_MOUSE = 1;
         }
         else 
@@ -103,6 +113,11 @@ int main()
                 tmp.hero.setOrigin((float)circleSize.x / 2, (float)circleSize.y / 2);
                 tmp.hero.setScale(0.5, 0.5);
                 tmp.v = d / sqrt(d.x * d.x + d.y * d.y);
+                
+                /*
+                старайтесь писать так, чтобы размерности величин были правильными
+                заведите константу MaxBulletSpeed вместо (float)(3 * circleSize.x / 4)
+                */
                 tmp.pos = center + tmp.v * (float)(3 * circleSize.x / 4);
                 tmp.hero.setRotation(90 + (float)(atan2f(d.y, d.x) * 180 / PI));
                 tmp.hero.setPosition(tmp.pos);
@@ -135,6 +150,11 @@ int main()
                 // заменить на строку 
                 //  itr = bullets.erase(itr);
                 // сразу летит Ошибка
+                
+                /*
+                Разбейте тогда этот цикл на два: первый удаляет пули, которые вылетели из карты с помощью
+                std::remove_if, а второй рисует то, что осталось...Это самое четкое решение.
+                */
             }
            
         }
