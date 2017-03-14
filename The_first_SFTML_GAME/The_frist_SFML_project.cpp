@@ -6,19 +6,11 @@ struct Bullet
 {
     sf::Vector2f pos;
     sf::Vector2f v;
-    
-    /*
-    лучше не смешивать отрисовку с логикой. программа должна быть модульной, чтобы проще было
-    добавлять что-то/изменять.
-    */
+    float bullet_speed = 500;
     sf::Sprite hero;
     void update(float dt)
     {
-        /*
-            Почему делите на 2? Добавьте комментарий к строке, т.к. неочевидно
-            не нужна вроде эта двойка здесь.
-        */
-        pos += v * (dt / 2) ;
+        pos += v * (dt * bullet_speed) ;
     }
 };
 
@@ -29,23 +21,16 @@ bool checkPosition(const sf::Sprite circle, const int Width, const int Height, c
     sf::Vector2f center = circle.getPosition();
     switch (way)
     {
-    /*
-        зачем вы к int кастуете каждый char?
-    */
-    case (int)'u':
+    case 'u':
         return (center.y > size);
-    case (int)'d':
+    case 'd':
         return (center.y + size < Height);
-    case (int)'l':
+    case 'l':
         return (center.x > size);
-    case (int)'r':
+    case 'r':
         return (center.x + size < Width);
-    case (int)'b':
-        /*
-        без кучи скобок будет тоже правильно работать
-        return center.x < Width && center.x > 0 && center.y < Height && center.y > 0;
-        */
-        return ((center.x < Width) && (center.x > 0) && (center.y < Height) && (center.y > 0));
+    case 'b':
+        return (center.x < Width && center.x > 0 && center.y < Height && center.y > 0);
     default:
         return 0;
         break;
@@ -58,6 +43,8 @@ int main()
     const int Widht = 800;
     const int Height = 600;
     float Max_speed = 400;
+    float dt;
+    float Prev_time = 0;
     Bullet tmp;
     std::vector <Bullet> bullets;
     bullets.reserve(1000);
@@ -71,7 +58,7 @@ int main()
     sf::Sprite circle(texture);
     circle.setPosition(400, 300);
     sf::Vector2u circleSize = circle.getTexture()->getSize();
-    float Prev_time = 0;
+   
     while (window.isOpen())
     {
         circle.setOrigin((float)circleSize.x / 2, (float)circleSize.y / 2);
@@ -81,25 +68,22 @@ int main()
         circle.setRotation(90 + (float)(atan2f(d.y, d.x) * 180 / PI));
         sf::Time time = clock.getElapsedTime();
         window.clear(sf::Color::Yellow);
-        
-        /*
-            заведите переменную dt, чтобы не копировать одну и ту же строку (-time.asSeconds() + Prev_time)
-        */
+        dt = time.asSeconds() - Prev_time;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && checkPosition(circle, Widht, Height, 'l'))
         {
-            circle.move((-time.asSeconds() + Prev_time) * Max_speed, 0);
+            circle.move((-dt) * Max_speed, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && checkPosition(circle, Widht, Height, 'r'))
         {
-            circle.move((time.asSeconds() - Prev_time) * Max_speed, 0);
+            circle.move((dt) * Max_speed, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && checkPosition(circle, Widht, Height, 'u'))
         {
-            circle.move(0, (-time.asSeconds() + Prev_time) * Max_speed);
+            circle.move(0, (-dt) * Max_speed);
         } 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && checkPosition(circle, Widht, Height, 'd'))
         {
-            circle.move(0, (time.asSeconds() - Prev_time) * Max_speed);
+            circle.move(0, (dt) * Max_speed);
         }
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
@@ -111,6 +95,7 @@ int main()
             этот флаг нужен, чтобы нельзя было очередью стрелять?
             можно было бы ввести время "перезарядки", например, чтобы не слишком часто пули вылетали при нажатой кнопке мыши
             */
+            // Да, нужны одиночные выстрелы, ибо стрельба очередью будет при моей реализации пуль не очень красива
             if (FLAG_FOR_MOUSE == 1)
             {
                 FLAG_FOR_MOUSE = 0;
@@ -127,10 +112,7 @@ int main()
         
         for (auto itr = bullets.begin(); itr != bullets.end(); ++itr)
         {
-            /*
-            большие сомнения вызывает +1 ...
-            */
-            itr->update(static_cast<float>(time.asSeconds() - Prev_time + 1));
+            itr->update(dt);
             itr->hero.setPosition(itr->pos);
             window.draw(itr->hero);
             if (!checkPosition(itr->hero, Widht, Height, 'b'))
@@ -142,11 +124,17 @@ int main()
                   bullets.erase(itr);
                   itr--;
                   строку 
-                  itr = bullets.erase(itr);
+                  itr = bullets.erase(itr); 
                   то будет работать гарантированно корректно
                 */
                 bullets.erase(itr);
                 itr--;
+                // Если 
+                //bullets.erase(itr);
+                //  itr--;
+                // заменить на строку 
+                //  itr = bullets.erase(itr);
+                // сразу летит Ошибка
             }
            
         }
