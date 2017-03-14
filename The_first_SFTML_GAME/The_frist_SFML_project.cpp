@@ -6,9 +6,18 @@ struct Bullet
 {
     sf::Vector2f pos;
     sf::Vector2f v;
+    
+    /*
+    лучше не смешивать отрисовку с логикой. программа должна быть модульной, чтобы проще было
+    добавлять что-то/изменять.
+    */
     sf::Sprite hero;
     void update(float dt)
     {
+        /*
+            Почему делите на 2? Добавьте комментарий к строке, т.к. неочевидно
+            не нужна вроде эта двойка здесь.
+        */
         pos += v * (dt / 2) ;
     }
 };
@@ -20,6 +29,9 @@ bool checkPosition(const sf::Sprite circle, const int Width, const int Height, c
     sf::Vector2f center = circle.getPosition();
     switch (way)
     {
+    /*
+        зачем вы к int кастуете каждый char?
+    */
     case (int)'u':
         return (center.y > size);
     case (int)'d':
@@ -29,6 +41,10 @@ bool checkPosition(const sf::Sprite circle, const int Width, const int Height, c
     case (int)'r':
         return (center.x + size < Width);
     case (int)'b':
+        /*
+        без кучи скобок будет тоже правильно работать
+        return center.x < Width && center.x > 0 && center.y < Height && center.y > 0;
+        */
         return ((center.x < Width) && (center.x > 0) && (center.y < Height) && (center.y > 0));
     default:
         return 0;
@@ -65,6 +81,10 @@ int main()
         circle.setRotation(90 + (float)(atan2f(d.y, d.x) * 180 / PI));
         sf::Time time = clock.getElapsedTime();
         window.clear(sf::Color::Yellow);
+        
+        /*
+            заведите переменную dt, чтобы не копировать одну и ту же строку (-time.asSeconds() + Prev_time)
+        */
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && checkPosition(circle, Widht, Height, 'l'))
         {
             circle.move((-time.asSeconds() + Prev_time) * Max_speed, 0);
@@ -87,6 +107,10 @@ int main()
         }
         else 
         {
+            /*
+            этот флаг нужен, чтобы нельзя было очередью стрелять?
+            можно было бы ввести время "перезарядки", например, чтобы не слишком часто пули вылетали при нажатой кнопке мыши
+            */
             if (FLAG_FOR_MOUSE == 1)
             {
                 FLAG_FOR_MOUSE = 0;
@@ -100,13 +124,27 @@ int main()
                 bullets.push_back(tmp);
             }
         }
+        
         for (auto itr = bullets.begin(); itr != bullets.end(); ++itr)
         {
+            /*
+            большие сомнения вызывает +1 ...
+            */
             itr->update(static_cast<float>(time.asSeconds() - Prev_time + 1));
             itr->hero.setPosition(itr->pos);
             window.draw(itr->hero);
             if (!checkPosition(itr->hero, Widht, Height, 'b'))
             {
+                /* в общем случае такое удаление отработает неправильно. 
+                  думаю, мы во второй половине апреля поговорим, как вектор работает...
+                  
+                  мне кажется, что если написать вместо
+                  bullets.erase(itr);
+                  itr--;
+                  строку 
+                  itr = bullets.erase(itr);
+                  то будет работать гарантированно корректно
+                */
                 bullets.erase(itr);
                 itr--;
             }
