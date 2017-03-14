@@ -1,7 +1,7 @@
 #include "Vector2.h"
 #include <math.h>
 
-Vector2::Vector2(double a, double b);
+Vector2::Vector2(double a, double b):
 x(a), y(b)
 {}
 
@@ -37,7 +37,7 @@ Vector2 operator-(const Vector2& first, const Vector2& second)
     return Vector2(first.x - second.x, first.y - second.y);
 }
 
-double Vector2::len const
+double Vector2::len() const
 {
         return (sqrt(x * x + y * y));
 }
