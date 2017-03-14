@@ -1,8 +1,8 @@
 #include "Vector2.h"
 #include <math.h>
 
-Vector2::Vector2(double a, double b):
-x(a), y(b)
+Vector2::Vector2(double a, double b) :
+    x(a), y(b)
 {}
 
 std::ostream& operator << (std::ostream& stream, const Vector2& v)
@@ -39,12 +39,12 @@ Vector2 operator-(const Vector2& first, const Vector2& second)
 
 double Vector2::len() const
 {
-        return (sqrt(x * x + y * y));
+    return (sqrt(x * x + y * y));
 }
 
 Vector2 Vector2::unit_vector() const
 {
-    return Vector2(x , y) / len(); 
+    return Vector2(x, y) / len();
 }
 
 Vector2 Vector2::normal() const
