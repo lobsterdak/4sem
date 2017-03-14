@@ -12,7 +12,7 @@ class Vector2
 {
     public:
         double x, y;
-        Vector2();
+        Vector2()
         {}
         Vector2(double a, double b);
         ~Vector2(){}
