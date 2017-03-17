@@ -77,6 +77,9 @@ int main()
     while (window.isOpen())
     {
         window.clear(sf::Color::Black);
+        /*
+        –ò–∑–≤—Ä–∞—Ç –∫–∞–∫–æ–π-—Ç–æ —Å FLAG_FOR_MOUSE ... –µ—Å—Ç—å –∂–µ isButtonReleased ...
+        */
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
             FLAG_FOR_MOUSE = true;
@@ -101,9 +104,9 @@ int main()
         for (int i = 0; i < balls.size(); i++)
         {
             for (int j = 0; j < balls.size(); j++)          //  for (int j = i; j < balls.size(); j++)
-            {                                               // ÂÒÎË ÔËÒ‡Ú¸ Ú‡Í, ÚÓ ¯‡˚ ÔÓ˜ÂÏÛ Á‡Î‡ÁˇÚ ‰Û„ Ì‡ ‰Û„‡
-                if (i != j)                                 // ıÓÚˇ Í‡ÁÓÎÓÒ¸ ·˚, ‚ ˝ÚÓÏ ÒÎÛ˜‡Â ‰ÂÎ‡ÂÏ 1 ÔÓ‚ÂÍÛ
-                    check_balls_bump(balls[i], balls[j]);     // ‚ÏÂÒÚÓ ‰‚Ûı
+            {                                               // √•√±√´√® √Ø√®√±√†√≤√º √≤√†√™, √≤√Æ √∏√†√∞√ª √Ø√Æ√∑√•√¨√≥ √ß√†√´√†√ß√ø√≤ √§√∞√≥√£ √≠√† √§√∞√≥√£√†
+                if (i != j)                                 // √µ√Æ√≤√ø √™√†√ß√Æ√´√Æ√±√º √°√ª, √¢ √Ω√≤√Æ√¨ √±√´√≥√∑√†√• √§√•√´√†√•√¨ 1 √Ø√∞√Æ√¢√•√∞√™√≥
+                    check_balls_bump(balls[i], balls[j]);     // √¢√¨√•√±√≤√Æ √§√¢√≥√µ
             }
         }
         while (window.pollEvent(event))
