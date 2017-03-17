@@ -43,11 +43,7 @@ int main()
     bool FLAG_FOR_MOUSE;
     const int Widht = 800;
     const int Height = 600;
-    
-    /*
-    Помесь разных стилей: пишите либо MaxSpeed, либо max_speed, либо maxSpeed
-    */
-    float Max_speed = 400;
+    float max_speed = 400;
     float dt;
     float Prev_time = 0;
     Bullet tmp;
@@ -74,50 +70,38 @@ int main()
         sf::Time time = clock.getElapsedTime();
         window.clear(sf::Color::Yellow);
         dt = time.asSeconds() - Prev_time;
-        
+        float step = max_speed * dt;
         // можно было бы не вводить синонимы: 'l' <=> sf::Keyboard::Left 
         // передали бы сразу в checkPosition переменную типа sf::Keyboard::Key
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && checkPosition(circle, Widht, Height, 'l'))
         {
-            // тогда бы заодно завели float step = maxSpeed * dt;
-            circle.move((-dt) * Max_speed, 0);
+            circle.move(- step, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && checkPosition(circle, Widht, Height, 'r'))
         {
-            circle.move((dt) * Max_speed, 0);
+            circle.move(step, 0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && checkPosition(circle, Widht, Height, 'u'))
         {
-            circle.move(0, (-dt) * Max_speed);
+            circle.move(0, - step);
         } 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && checkPosition(circle, Widht, Height, 'd'))
         {
-            circle.move(0, (dt) * Max_speed);
+            circle.move(0, step);
         }
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
-            // в с++ можно писать = true
-            FLAG_FOR_MOUSE = 1;
+            FLAG_FOR_MOUSE = true;
         }
         else 
         {
-            /*
-            этот флаг нужен, чтобы нельзя было очередью стрелять?
-            можно было бы ввести время "перезарядки", например, чтобы не слишком часто пули вылетали при нажатой кнопке мыши
-            */
-            // Да, нужны одиночные выстрелы, ибо стрельба очередью будет при моей реализации пуль не очень красива
-            if (FLAG_FOR_MOUSE == 1)
+            if (FLAG_FOR_MOUSE == true)
             {
-                FLAG_FOR_MOUSE = 0;
+                FLAG_FOR_MOUSE = false;
                 tmp.hero.setTexture(texture_for_bullet);
                 tmp.hero.setOrigin((float)circleSize.x / 2, (float)circleSize.y / 2);
                 tmp.hero.setScale(0.5, 0.5);
                 tmp.v = d / sqrt(d.x * d.x + d.y * d.y);
-                
-                /*
-                старайтесь писать так, чтобы размерности величин были правильными
-                заведите константу MaxBulletSpeed вместо (float)(3 * circleSize.x / 4)
-                */
                 tmp.pos = center + tmp.v * (float)(3 * circleSize.x / 4);
                 tmp.hero.setRotation(90 + (float)(atan2f(d.y, d.x) * 180 / PI));
                 tmp.hero.setPosition(tmp.pos);
