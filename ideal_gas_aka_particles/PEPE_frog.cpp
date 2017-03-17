@@ -64,7 +64,6 @@ int main()
 {
     int weight = 1200;
     int height = 700;
-    bool FLAG_FOR_MOUSE = false;
     float dt;
     float prev_time = 0;
     float scale = 0.8;
@@ -85,21 +84,15 @@ int main()
     while (window.isOpen())
     {
         window.clear(sf::Color::Black);
-        /*
-        Изврат какой-то с FLAG_FOR_MOUSE ... есть же isButtonReleased ...
-        */
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        while (window.pollEvent(event))
         {
-            FLAG_FOR_MOUSE = true;
-        }
-        else
-        {
-            if (FLAG_FOR_MOUSE == true)
+            if (event.type == sf::Event::Closed)
+                window.close();
+            if (event.type == sf::Event::MouseButtonReleased)
             {
                 tmp.set_position(sf::Mouse::getPosition(window));
                 tmp.set_rand_speed();
                 balls.push_back(tmp);
-                FLAG_FOR_MOUSE = false;
             }
         }
         time = clock.getElapsedTime();
@@ -112,16 +105,11 @@ int main()
         }
         for (int i = 0; i < balls.size(); i++)
         {
-            for (int j = 0; j < balls.size(); j++)          //  for (int j = i; j < balls.size(); j++)
-            {                                               // åñëè ïèñàòü òàê, òî øàðû ïî÷åìó çàëàçÿò äðóã íà äðóãà
-                if (i != j)                                 // õîòÿ êàçîëîñü áû, â ýòîì ñëó÷àå äåëàåì 1 ïðîâåðêó
-                    check_balls_bump(balls[i], balls[j]);     // âìåñòî äâóõ
+            for (int j = 0; j < balls.size(); j++)
+            {
+                if (i != j)
+                    check_balls_bump(balls[i], balls[j]);
             }
-        }
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
         }
         for (auto itr : balls)
         {
