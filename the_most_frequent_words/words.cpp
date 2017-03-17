@@ -23,13 +23,10 @@ struct Statistics
 	std::string word;
 };
 
-/*
-обычно аргументы в компараторах и бинарных операторах называют lhs, rhs ...
-left-hand side, right-hand side
-*/
-bool compare(const Statistics& a, const Statistics& b)
+
+bool compare(const Statistics& lhs, const Statistics& rhs)
 {
-	return a.cout > b.cout;
+	return lhs.cout > rhs.cout;
 }
 int main() 
 {
