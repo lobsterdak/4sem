@@ -6,12 +6,13 @@ class material_point
 public:
     Vector2 position;
     Vector2 velocity;
-    static const int speed_rate = 10;
+    Vector2 acselleration;
+    static const int speed_rate = 15;
     void set_rand_speed() {
         int rad = rand();
         velocity.x = cos(rad);
         velocity.y = sin(rad);
-        velocity = velocity / speed_rate;
+        velocity = velocity * speed_rate;
     }
 };
 
@@ -28,6 +29,10 @@ public:
     void update(double dt)
     {
         position += velocity * dt;
+    }
+    void update_velocity(double dt)
+    {
+        velocity += acselleration * dt;
     }
 };
 
@@ -62,6 +67,7 @@ int main()
     bool FLAG_FOR_MOUSE = false;
     float dt;
     float prev_time = 0;
+    float scale = 0.8;
     Ball tmp;
     sf::Clock clock;
     sf::Texture texture;
@@ -72,8 +78,10 @@ int main()
     sf::RenderWindow window(sf::VideoMode(weight, height), "My window");
     texture.loadFromFile("1.png");
     tmp.sprite.setTexture(texture);
-    tmp.radius = tmp.sprite.getTexture()->getSize().y / 2;
+    tmp.acselleration = { 0, 9.8 };
+    tmp.radius = tmp.sprite.getTexture()->getSize().y / 2 * scale;
     tmp.sprite.setOrigin(tmp.sprite.getTexture()->getSize().x / 2, (tmp.sprite.getTexture()->getSize().y / 2));
+    tmp.sprite.scale(scale, scale);
     while (window.isOpen())
     {
         window.clear(sf::Color::Black);
@@ -96,7 +104,8 @@ int main()
         for (int i = 0; i < balls.size(); i++)
         {
             check_ball(balls[i], weight, height);
-            balls[i].update(dt + 1);
+            balls[i].update_velocity(dt);
+            balls[i].update(dt);
         }
         for (int i = 0; i < balls.size(); i++)
         {
